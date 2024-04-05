@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.song-list {
+  div.col {
+    padding: 0 .8rem;
+
+    div {
+      padding: .3rem 1rem;
+    }
+
+    &:not(.selected) {
+      padding: 0 1.5rem;
+    }
+
+    &.selected {
+      color: green;
+    }
+
+    &:has(~.selected) {
+      color: red;
+    }
+  }
+}
