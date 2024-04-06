@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
-<html>
-<!-- <html dir="rtl"> -->
+<!-- <html> -->
+<html dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,20 +20,22 @@
     <meta name="theme-color" content="#7952b3">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎧</text></svg>">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" /> -->
     <!-- Or for RTL support -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" /> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" /> -->
     <!-- Or for RTL support -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" /> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <header class="px-3 d-flex align-items-stretch">
+    <header class="fixed-mobile-resolution container-fluid px-3 d-flex align-items-stretch">
         <div class="container-fluid d-flex align-items-center p-3 border-bottom">
             <div class="d-flex align-items-center fs-4 mb-0">
                 <img src="./svgs/solid/gear.svg" height="20" class="">
@@ -47,12 +49,12 @@
         </div>
     </header>
 
-    <div class="container-fluid px-3">
+    <div class="fixed-mobile-resolution container-fluid px-3">
         <div class="d-flex justify-content-center text-center" style="font-size: .8rem;">
             <div class="py-3 d-flex align-items-center">
-                <img src="./svgs/solid/gifts.svg" width="20">
+                <img src="./svgs/solid/gifts.svg" width="20" class="d-none">
                 <span class="mx-2 my-auto">Guess the song played by the band</span>
-                <img src="./svgs/solid/gifts.svg" width="20">
+                <img src="./svgs/solid/gifts.svg" width="20" class="d-none">
             </div>
         </div>
         <div class="row row-cols-1 g-2" id="song_list_guessing">
@@ -78,31 +80,48 @@
                 <div class="bg-warning bg-gradient">result</div>
             </div>
         </div>
-        <div class="audio-player-container mt-4">
+        <div class="fixed-mobile-resolution container-fluid audio-player-container mt-4">
             <div class="text-center">
-                <button class="btn btn-primary" id="play_button"><img src="./svgs/solid/play.svg" width="20"></button>
+                <button class="btn btn-outline-primary rounded-pill px-4" id="play_button"><img src="./svgs/solid/play.svg" width="20"></button>
             </div>
-            <div class="d-flex">
-                <audio src="" preload=”metadata”></audio>
-                <progress id="audio_handle" value="32" max="100" class="w-100 mt-3"></progress>
-            </div>
-            <div class="mt-3">
-                <select class="form-select" id="song_list" data-placeholder="Recognize it? Type the artist name or title">
-                    <option></option>
-                </select>
-            </div>
-            <div class="d-flex justify-content-between mt-3">
-                <button class="btn btn-danger" id="skip_button">
-                    SKIP
-                </button>
-                <img src="./svgs/solid/puzzle-piece.svg" width="30">
-                <button class="btn btn-success" id="guess_button">
-                    GUESS
-                </button>
+            <div class="d-none" id="play_panel">
+                <div class="d-flex">
+                    <audio src="" preload=”metadata”></audio>
+                    <progress id="audio_handle" value="0" max="100" class="w-100 mt-3"></progress>
+                </div>
+                <div class="mt-3">
+                    <select class="form-select" id="song_list" data-placeholder="Recognize it? Type the artist name or title">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <button class="btn btn-danger" id="skip_button">
+                        SKIP
+                    </button>
+                    <img src="./svgs/solid/puzzle-piece.svg" width="30">
+                    <button class="btn btn-success" id="guess_button">
+                        GUESS
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="mt-4 border-top border-2 border-primary py-3 text-center" id="result_panel">
+        <div class="mt-4 border-top border-2 border-primary py-3 text-center d-none" id="result_panel">
+        </div>
+    </div>
+
+    <div class="fixed-mobile-resolution fixed-bottom container-fluid d-flex justify-content-center">
+        <div class="bg-danger d-flex text-white p-1 mb-2 rounded-3" style="min-width: 360px;">
+            <img class="me-2" src="./svgs/regular/gem.svg" alt="" width="30">
+            <div>
+                <div class="fs-5">Bandle, the App is finally here!</div>
+                <div id="notify_text">
+                    <div class="d-none">Download it know from the play store</div>
+                    <div class="d-none">Play over 500 songs</div>
+                    <div class="d-none">6 bounds rounds to test your music knowledge</div>
+                    <div class="d-none">Fan party game for evenings with Friends!</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -130,7 +149,7 @@
 
     <div hidden>
         <div>
-            <iframe id="player" allow="autoplay" height="0" src="https://w.soundcloud.com/player/?url=https://soundcloud.com/rick-astley-official/never-gonna-give-you-up"></iframe>
+            <iframe id="player" allow="autoplay" height="0add" src="https://w.soundcloud.com/player/?url=https://soundcloud.com/rick-astley-official/never-gonna-give-you-up"></iframe>
         </div>
     </div>
 
@@ -156,13 +175,16 @@
         const guessButton_temp = document.getElementById('guess_button');
         const resultElement = document.getElementById('result_panel');
         const playButton = document.getElementById('play_button');
+        const notifyText = document.getElementById('notify_text');
+        const progressBar = document.getElementById('audio_handle');
+        const playPanel = document.getElementById('play_panel');
 
         const sc_temp = SC.Widget('player');
         sc_temp.bind(SC.Widget.Events.READY, () => {
             sc_temp.setVolume(25);
         });
 
-        let selectedSong, playerTimeout_temp;
+        let selectedSong, playerTimeout_temp, playerPosition, scores=[];
         const stepSeconds = [2, 3, 5, 8, 12, 16];
         let currentStep = -1;
         stepSeconds.forEach((second, step) => {
@@ -175,6 +197,8 @@
         });
 
         skipButton_temp.addEventListener('click', async function() {
+            if (stepSeconds.length <= currentStep) return;
+
             const result = await b_confirm('Would you skip this?');
 
             if (result)
@@ -182,6 +206,8 @@
         })
 
         guessButton_temp.addEventListener('click', async function() {
+            if (stepSeconds.length <= currentStep) return;
+
             if (!songListElement.value) {
                 selectSongToast.show();
                 return;
@@ -200,8 +226,6 @@
             else
                 playSound(stepSeconds[currentStep]);
         })
-
-        nextStepWithResult();
 
         async function b_confirm(msg) {
             const modalElem = document.createElement('div')
@@ -243,8 +267,46 @@
             })
         }
 
+        function loopNotifyText(element, firstElement) {
+            animateText(element).then(() => {
+                loopNotifyText(element.nextElementSibling ?? firstElement, firstElement);
+            })
+        }
+
+        function animateText(element, delay = 3) {
+            element.classList.remove(`d-none`);
+            return new Promise(resolve => {
+                animateCSS(element, 'fadeIn').then(() => {
+                    element.classList.add(`animate__delay-${delay}s`);
+                    animateCSS(element, 'fadeOut').then(() => {
+                        element.classList.remove(`animate__delay-${delay}s`);
+                        element.classList.add(`d-none`);
+                        resolve();
+                    })
+                })
+            })
+        }
+
+        function animateCSS (element, animation, prefix = 'animate__') {
+            // We create a Promise and return it
+            return new Promise((resolve, reject) => {
+                const animationName = `${prefix}${animation}`;
+
+                element.classList.add(`${prefix}animated`, animationName);
+
+                // When the animation ends, we clean the classes and resolve the Promise
+                function handleAnimationEnd(event) {
+                    event.stopPropagation();
+                    element.classList.remove(`${prefix}animated`, animationName);
+                    resolve('Animation ended');
+                }
+
+                element.addEventListener('animationend', handleAnimationEnd, { once: true });
+            });
+        }
+
         function nextStepWithResult(success) {
-            if (stepSeconds.length < currentStep) return;
+            if (stepSeconds.length <= currentStep) return;
 
             if (currentStep > -1) {
                 guessingElementList[currentStep].classList.remove('selected');
@@ -254,14 +316,21 @@
             }
 
             if (success) {
+                resultElement.classList.remove('d-none');
                 resultElement.textContent = ` לא הצלחתם לנחש את ${song.string}`;
+                Promise.all([animateCSS(resultElement, 'fadeIn')]);
                 return;
             }
+            scores[currentStep] = false;
+
             currentStep ++;
             guessingElementList[currentStep].classList.add('selected');
 
             if (currentStep == stepSeconds.length) {
                 // 6 step failed
+                resultElement.classList.remove('d-none');
+                resultElement.textContent = `Skiped All`;
+                Promise.all([animateCSS(resultElement, 'fadeIn')]);
             }
         }
 
@@ -280,6 +349,8 @@
         function stopSound() {
             sc_temp.pause();
             sc_temp.seekTo(0);
+            clearInterval(playerPosition);
+            playerPosition = null;
             clearTimeout(playerTimeout_temp);
             playerTimeout_temp = null;
 
@@ -292,8 +363,20 @@
         function playSound(second) {
             if (playerTimeout_temp) return;
 
+            if (playPanel.classList.contains('d-none')) {
+                playPanel.classList.remove('d-none');
+                Promise.all([animateCSS(playPanel, 'fadeIn')]);
+            }
+
             console.log('here', selectedSong.string, second * 1000);
             sc_temp.play();
+
+            let time = 0;
+            progressBar.value = time;
+            playerPosition = setInterval(() => {
+                time += 100;
+                progressBar.value = time * 100 / (second * 1000);
+            }, 100)
 
             const image = document.createElement('img');
             image.src = `./svgs/solid/pause.svg`;
@@ -314,6 +397,9 @@
                     })
             })
         }
+
+        nextStepWithResult();
+        loopNotifyText(notifyText.children[0], notifyText.children[0]);
 
         $(function() {
             getSongList().then(songs => {

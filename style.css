@@ -4,6 +4,10 @@
   div.col {
     padding: 0 1.5rem;
 
+    &:hover {
+      cursor: pointer;
+    }
+
     div {
       padding: .3rem 1rem;
     }
@@ -20,4 +24,8 @@
       color: red;
     }
   }
+}
+
+.fixed-mobile-resolution {
+  max-width: 430px;
 }
