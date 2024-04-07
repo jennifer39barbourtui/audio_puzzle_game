@@ -31,6 +31,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css" />
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -61,6 +63,21 @@
                     <input class="form-check-input" type="checkbox" name="rtl_radio" id="rtl_radio" checked>
                     <label class="form-check-label" for="rtl_radio">RTL</label>
                 </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between border rounded-3 my-3 p-1 position-relative shadow" id="audio_status_alert" style="font-size: 0.8rem">
+            <div class="close-btn">&times;</div>
+            <div class="d-flex flex-column align-items-center">
+                <div>Released in</div>
+                <div class="fw-bold" id="released_in">1974</div>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+                <div>Youtube views</div>
+                <div class="fw-bold"  id="youtube_views">111M</div>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+                <div>Difficulty</div>
+                <div class="fw-bold"  id="difficulty">Very Hard(par 5)</div>
             </div>
         </div>
         <div class="row row-cols-1 g-2" id="song_list_guessing">
@@ -96,7 +113,7 @@
                     <progress id="audio_handle" value="0" max="100" class="w-100 mt-3"></progress>
                 </div>
                 <div class="mt-3">
-                    <select class="form-select" id="song_list" data-placeholder="Recognize it? Type the artist name or title">
+                    <select class="form-select" id="song_list" data-placeholder="Recognize it? Type the artist name or title" multiple style="max-height: 30px;">
                         <option></option>
                     </select>
                 </div>
@@ -117,13 +134,13 @@
     </div>
 
     <div class="fixed-mobile-resolution fixed-bottom container-fluid d-flex justify-content-center">
-        <div class="bg-danger d-flex text-white p-1 mb-2 rounded-3" style="min-width: 360px;">
+        <div class="bg-danger d-flex text-white p-1 mb-2 rounded-3" style="min-width: 320px;">
             <div class="my-auto">
                 <img class="me-2" src="./mark.png" alt="">
             </div>
             <div>
-                <div class="fs-5">Bandle, the App is finally here!</div>
-                <div id="notify_text">
+                <div>Bandle, the App is finally here!</div>
+                <div id="notify_text" style="font-size: 0.8rem;">
                     <div class="d-none">Download it know from the play store</div>
                     <div class="d-none">Play over 500 songs</div>
                     <div class="d-none">6 bounds rounds to test your music knowledge</div>
@@ -164,14 +181,15 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/scripts/choices.min.js"></script>
     <script src="https://w.soundcloud.com/player/api.js"></script>
 
     <script>
-        $('#song_list').select2({
-            theme: "bootstrap-5",
-            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-            placeholder: $(this).data('placeholder'),
-        });
+        // $('#song_list').select2({
+        //     theme: "bootstrap-5",
+        //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        //     placeholder: $(this).data('placeholder'),
+        // });
         
     </script>
     <script>
@@ -187,6 +205,13 @@
         const progressBar = document.getElementById('audio_handle');
         const playPanel = document.getElementById('play_panel');
         const rtlSwitch = document.getElementById('rtl_radio');
+        const audioStatusCloseBtn = document.querySelector('#audio_status_alert .close-btn');
+        audioStatusCloseBtn.addEventListener('click', function() {
+            const parentElement = this.parentElement;
+            animateCSS(parentElement, 'fadeOut').then(() => {
+                parentElement.classList.add('d-none');
+            })
+        })
 
         const sc_temp = SC.Widget('player');
         sc_temp.bind(SC.Widget.Events.READY, () => {
@@ -469,164 +494,14 @@
                     option.textContent = song.string;
                     songListElement.appendChild(option);
                 })
+                new Choices(document.getElementById("song_list"), {
+                    maxItemCount: 1
+                });
 
                 selectedSong = songs[Math.floor(Math.random() * songs.length)];
                 sc_temp.load(selectedSong.url);
             })
         })
     </script>
-
-
-    <!-- <script>
-        let display = document.getElementById("display");
-        let guessCounter = document.getElementById("guessCounter");
-        let volumeSlider = document.getElementById("volumeSlider");
-        let skipButton = document.getElementById("skipButton");
-        let stopButton = document.getElementById("stopButton");
-        let playButton = document.getElementById("playButton");
-        let songsList = document.getElementById("songsList");
-        let guessInput = document.getElementById("guessInput");
-        let guessButton = document.getElementById("guessButton");
-        let sc = SC.Widget('player');
-
-        let guesses = [];
-        let currentGuess = 0;
-        let score = [null, null, null, null, null, null];
-        let totalSeconds = [2, 3, 5, 8, 12, 16];
-        var playerTimeout = null;
-        let songSet = (new URLSearchParams(window.location.search)).get('songs') || 'default';
-        var songs = [];
-        var song = {};
-
-        sc.bind(SC.Widget.Events.READY, () => {
-            skipButton.disabled = false;
-            playButton.disabled = false;
-            sc.setVolume(25);
-        });
-
-        let disableInputs = () => {
-            skipButton.disabled = true;
-            playButton.disabled = true;
-            guessInput.disabled = true;
-            guessButton.disabled = true;
-        };
-
-        let enableInputs = () => {
-            skipButton.disabled = false;
-            stopButton.disabled = false;
-            playButton.disabled = false;
-            guessInput.disabled = false;
-            guessButton.disabled = false;
-        };
-
-        let checkEndGame = () => {
-            if (currentGuess == 6) {
-                disableInputs();
-                display.innerHTML = ' לא הצלחתם לנחש את ' + song.string;
-                sc.pause();
-                sc.seekTo(0);
-                sc.play();
-            } else {
-                if (currentGuess == 5) {
-                    skipButton.innerHTML = 'skip';
-                } else {
-                    skipButton.innerHTML = `skip +${(totalSeconds[currentGuess+1] - totalSeconds[currentGuess])}s`;
-                }
-            }
-        }
-
-        let updateGuesses = () => {
-            // display.innerHTML = '';
-            // guesses.forEach((guess) => {
-            //     display.innerHTML += `${guess}</br>`;
-            // });
-
-            var scoreString = '';
-            score.forEach((guess) => {
-                if (guess === null) {
-                    scoreString += ' ⬜️'
-                } else if (guess === true) {
-                    scoreString += ' 🟩'
-                } else if (guess === false) {
-                    scoreString += ' 🟥'
-                }
-            });
-            guessCounter.innerHTML = scoreString;
-        };
-
-        volumeSlider.oninput = (e) => {
-            sc.setVolume(e.target.value);
-        };
-
-        skipButton.onclick = () => {
-            guesses[currentGuess] = 'SKIPPED';
-            score[currentGuess++] = false;
-            updateGuesses();
-            checkEndGame();
-        };
-
-        stopButton.onclick = () => {
-            clearTimeout(playerTimeout);
-            sc.pause();
-            sc.seekTo(0);
-            enableInputs();
-            stopButton.disabled = true;
-        };
-
-        playButton.onclick = () => {
-            disableInputs();
-            stopButton.disabled = false;
-            sc.play();
-
-            playerTimeout = setTimeout(() => {
-                sc.pause();
-                sc.seekTo(0);
-                enableInputs();
-                stopButton.disabled = true;
-            }, (totalSeconds[currentGuess] * 1000));
-        };
-
-        fetch(`https://raw.githubusercontent.com/milmanal/nuzeze/main/israeli/israeli_ariel_playlist.json`)
-            .then(response => response.json())
-            .then((json) => {
-                songs = json.sort((a, b) => 0.5 - Math.random());
-                song = songs[Math.floor(Math.random() * songs.length)];
-                songs.forEach((song) => {
-                    let option = document.createElement('option');
-                    option.value = song.string;
-                    songsList.appendChild(option);
-                })
-                sc.load(song.url);
-            });
-
-        guessInput.oninput = (e) => {            
-            if (songs.map(song => song.string).includes(guessInput.value)) {
-                guessButton.disabled = false;
-            } else {
-                guessButton.disabled = true;
-            }
-        };
-
-        guessButton.onclick = () => {
-            guesses[currentGuess] = guessInput.value;
-
-            if (song.string === guessInput.value) {
-                score[currentGuess] = true;
-                display.innerHTML = ' אלופים! ניחשתם את ' + song.string;
-                sc.pause();
-                sc.seekTo(0);
-                sc.play();
-                disableInputs();
-                //currentGuess = 6;
-            } else {
-                score[currentGuess++] = false;
-                guessInput.value = '';
-                guessButton.disabled = true;
-            }
-
-            updateGuesses();
-            checkEndGame();
-        };
-    </script> -->
 </body>
 </html>

@@ -29,3 +29,25 @@
 .fixed-mobile-resolution {
   max-width: 430px;
 }
+
+#audio_status_alert .close-btn {
+  position: absolute;
+  padding: 0 5px;
+  top: -10px;
+  right: -10px;
+  background-color: gray;
+  border-radius: 100%;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.choices__inner {
+  min-height: 32px;
+  padding: 3px 3px 0;
+
+  .choices__input {
+    margin-bottom: 0;
+  }
+}
