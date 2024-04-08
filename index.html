@@ -112,7 +112,7 @@
                     <audio src="" preload=”metadata”></audio>
                     <progress id="audio_handle" value="0" max="100" class="w-100 mt-3"></progress>
                 </div>
-                <div class="mt-3">
+                <div class="mt-3" dir="ltr">
                     <select class="form-select" id="song_list" data-placeholder="Recognize it? Type the artist name or title" multiple style="max-height: 30px;">
                         <option></option>
                     </select>
@@ -121,10 +121,38 @@
                     <button class="btn btn-danger" id="skip_button">
                         SKIP
                     </button>
-                    <img src="./svgs/solid/puzzle-piece.svg" width="30">
                     <button class="btn btn-success" id="guess_button">
                         GUESS
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 position-relative" style="z-index: 11;">
+            <div class="position-absolute">
+                <div id="available_skip" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body border-start border-3 border-primary">
+                            If you don't recognize the song, press SKIP to hear more instruments
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div id="wrong_guess" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body border-start border-3 border-warning">
+                            Guessing Failed
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div id="select_song" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body border-start border-3 border-danger">
+                            Select song please
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -146,28 +174,6 @@
                     <div class="d-none">6 bounds rounds to test your music knowledge</div>
                     <div class="d-none">Fan party game for evenings with Friends!</div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11;">
-        <div id="available_skip" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body border-start border-3 border-primary">
-                    If you don't recognize the song, press SKIP to hear more instruments
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11;">
-        <div id="select_song" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body border-start border-3 border-danger">
-                    Select song please
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -195,6 +201,7 @@
     <script>
         const songListElement = document.getElementById('song_list');
         const availableToast = new bootstrap.Toast(document.getElementById('available_skip'));
+        const wrongGuessToast = new bootstrap.Toast(document.getElementById('wrong_guess'));
         const selectSongToast = new bootstrap.Toast(document.getElementById('select_song'));
         const guessingElementList = document.getElementById('song_list_guessing').children;
         const skipButton_temp = document.getElementById('skip_button');
@@ -233,10 +240,7 @@
         skipButton_temp.addEventListener('click', async function() {
             if (stepSeconds.length <= currentStep) return;
 
-            const result = await b_confirm('Would you skip this?');
-
-            if (result)
-                nextStepWithResult();
+            nextStepWithResult();
         })
 
         guessButton_temp.addEventListener('click', async function() {
@@ -247,11 +251,7 @@
                 return;
             }
 
-            const result = await b_confirm('Are you sure?');
-
-            if (result) {
-                nextStepWithResult(selectedSong.string === songListElement.value);
-            }
+            nextStepWithResult(selectedSong.string === songListElement.value);
         })
 
         playButton.addEventListener('click', function() {
@@ -407,6 +407,8 @@
                 resultElement.textContent = ` לא הצלחתם לנחש את ${song.string}`;
                 Promise.all([animateCSS(resultElement, 'fadeIn')]);
                 return;
+            } else if (result === false && currentStep > -1) {
+                wrongGuessToast.show();
             }
 
             currentStep ++;
